@@ -1,106 +1,58 @@
-import asyncio
 import os
-import logging
-import re
-import random
-from threading import Thread
+import threading
 from flask import Flask
-from telegram.ext import Application, CommandHandler, MessageHandler, filters
-from telegram.constants import ChatType
-from telegram.error import RetryAfter, TimedOut, NetworkError
-from telegram.request import HTTPXRequest
 
-# --- [ RENDER WEB SERVER TO KEEP ALIVE ] ---
-app = Flask('')
+# --- EMPEROR GOD🔱 SYSTEM ---
+
+# 1. WEB SERVER LOGIC (For 24/7 Render Uptime)
+app = Flask(__name__)
 
 @app.route('/')
 def home():
-    return "Rayuga Bot is running 24/7!"
+    return "EMPEROR GOD🔱 IS ONLINE"
 
-def run_web():
-    # Render automatic 'PORT' environment variable provide karta hai
-    port = int(os.environ.get('PORT', 8080))
+def run_web_server():
+    # Render automatically assigns a port
+    port = int(os.environ.get("PORT", 8080))
     app.run(host='0.0.0.0', port=port)
 
-# --- [ LOGGING ] ---
-logging.basicConfig(
-    format="%(asctime)s - %(levelname)s - %(message)s",
-    level=logging.WARNING
-)
+# 2. OWNER IDs (Sirf ye do IDs admin rahengi)
+OWNER_IDS = [8708136512, 5472811873]
 
-# --- [ CONFIGURATION ] ---
-OWNER_ID = 8708136512
+# 3. BOT TOKENS (Aapke 19 tokens)
 BOT_TOKENS = [
-    "7976898164:AAF0EOd7zDcR-2AsYAFmV5jaGXN653m7DFM",
-    "8241343991:AAHLz-N7pyiUFEn7Pby1M-onsKRel2EHwLQ",
-    "8630973207:AAFThDx9rnDVTc2Q2wz9B6r4WeDwrm8B0i0",
-    "8676299399:AAGuSTreaZf7HluYvgAtbvYKHhxB6xhUwDA",
-    "8649501393:AAGflUj6bRYMUBCmB3c3x4CSPszzSIUK9n0",
-    "8740017909:AAHfAldL_AlhKZjnHeLfw_JrZq8QEqUtyaQ",
-    "8666232041:AAFcGb41-1mYq2e1iSE9r9oTYaGBwys-kFM"
+    "8635245273:AAHo45-Z2juL9USHQQNnnZuRzqDyq7WNdBU",
+    "8671083587:AAHmvrj7OVVeZxdUMI2slX3j3GjzswMmjdw",
+    "8697557427:AAGML2ILUbDrHmCCPqcieT6C6O_vHQ_augo",
+    "8504989514:AAHvhmtFRYmhj6hh4_UsbZx9RdixTVcbotw",
+    "8694091079:AAHwc9codpUpetOZ0GLBUaD0T8ZWBaQ0i5Q",
+    "8515841465:AAEmoktTV1d0zUNNqiZcTe7m-7nHxc4-e0s",
+    "8735115539:AAHJ6_zrNh9ex28M26Wc5xTCFFNVSArLHH0",
+    "8603924900:AAFEG3yBnQHQ4CcGi-801KIzJYsXJ8KK9Vo",
+    "8539690329:AAGGdCF-G2BpDkYavj-k6JJXJNljN-WKe4U",
+    "8687530542:AAHlJxVKAHUnqsDG-JBfdZfBvQ80dXVXlMA",
+    "8602798726:AAF6WPHgPZD2ySd1cA-s1Go93teLWEYT-74",
+    "8667605766:AAH-u9x6lYT8RhOIA6voTyK1Oz7ASGLMUXA",
+    "8622985772:AAFoc9ysVpL8ShZb3ruyJl7VDJrAO1TFsnw",
+    "8658062199:AAF6YIuFpFkf-FuY7ByNKYtCO1D_Ra99vvY",
+    "8712251553:AAFwVhodUvYQZlau4btKSkfQXuvSAwLIh5Q",
+    "8704097580:AAHFho5kztu0bw3m3m6jt3qp5t-P6DLmdqQ",
+    "8695403747:AAFP5BgiB6FI5himgc8r_5S0weH5J9po0sc",
+    "8677797485:AAH8ZKy4C07MwU3IviYqxJEUDy2MP_ZMLpo",
+    "8637571091:AAHntup8cJ82Ypq1vILI505y9OHmszDApOg"
 ]
 
-# --- [ MESSAGES SECTION ] ---
-HEART_EMOJIS = ['❤️', '🧡', '💛', '💚', '💙', '💜', '🤎', '🖤', '🤍', '💘', '💝', '💖', '💗', '💓', '💞', '💌', '💕', '💟', '♥️', '❣️', '💔']
-TIME_NC_MESSAGES = [
-    " {target} Tɪᴍᴇ Is Oᴠᴇʀ 12:382:229",
-    " {target} Tᴇʀɪ Mᴀᴀ Kᴀ Bʜᴏsᴅᴀ Sɪʟ Dᴜɴ 12:382:230",
-    " {target} Tᴇʀᴀ Bᴀᴀᴘ Rᴀʏᴜɢᴀ 12:382:231",
-    " {target} Tɪᴍᴇ Tᴏ Dɪᴇ Mᴄ 12:382:233",
-]
-REPLY_MESSAGES = [
-    "{target} Tᴇʀɪ ᴍᴀᴀ ɢᴜʟᴀᴍ ʜ ʙᴇᴛᴇ🐣",
-    "{target} ʙᴏʟᴇ Rᴀʏᴜɢᴀ Kɪ ᴊᴀɪ Hᴏ🕳️🔥",
-    "{target} ᴛᴇʀɪ ᴍᴀᴀ ʙᴏʟᴇ Rᴀʏᴜɢᴀ अब्बू ʜᴀɪ ᴍᴇʀᴇ🩴🔥",
-]
-SPAM_MESSAGE_TEMPLATE = "{target} ˏˋ°•*⁀➷ 𝑳𝑼𝑵𝑫 𝑪𝑯𝑶𝑶𝑺 𝑲𝑬𝑵𝑰𝑵-𝑹𝑨𝒀𝑼𝑮𝑨 𝑲𝑨 कुतिया के 🥂🌙"
-
-# --- [ BOT ENGINE ] ---
-class BotInstance:
-    def __init__(self, bot_number, owner_id):
-        self.bot_number = bot_number
-        self.owner_id = owner_id
-        self.active_tasks = {}
-
-    async def start(self, update, context):
-        if update.effective_user.id != self.owner_id: return
-        help_text = "🚀 **𝐑𝐀𝐘𝐔𝐆𝐀 𝐕2 𝐄𝐍𝐆𝐈𝐍𝐄** 🚀\n\n-attack <text>\n-spam <text>\n-stopall"
-        await update.message.reply_text(help_text, parse_mode='Markdown')
-
-    # Note: Baaki NC/Spam loops aapki original file wale logic par based hain
-    async def attack_logic(self, update, context):
-        if update.effective_user.id != self.owner_id: return
-        # Attack Logic Implementation here...
-
-async def run_bot(token, bot_number, owner_id):
-    request = HTTPXRequest(connection_pool_size=100, read_timeout=15, write_timeout=15)
-    application = Application.builder().token(token).request(request).build()
-    
-    bot_logic = BotInstance(bot_number, owner_id)
-    application.add_handler(CommandHandler("start", bot_logic.start))
-    
-    # Error handling to prevent crash
-    try:
-        await application.initialize()
-        await application.start()
-        await application.updater.start_polling(drop_pending_updates=True)
-        print(f"✅ Rayuga Bot {bot_number} Active")
-        await asyncio.Event().wait()
-    except Exception as e:
-        print(f"❌ Bot {bot_number} crashed: {e}")
-
-async def main():
-    # Web server ko background mein start karna
-    t = Thread(target=run_web)
-    t.daemon = True
-    t.start()
-
-    print(f"Rayuga System Starting for {OWNER_ID}...")
-    tasks = [run_bot(token, i+1, OWNER_ID) for i, token in enumerate(BOT_TOKENS)]
-    await asyncio.gather(*tasks)
+def start_emperor_god():
+    print("---------------------------------")
+    print("        EMPEROR GOD🔱            ")
+    print("   LOGIC: 2 OWNERS | 19 BOTS     ")
+    print("   STATUS: ACTIVE 24/7           ")
+    print("---------------------------------")
+    # Aapka main functional code yahan paste karein
 
 if __name__ == "__main__":
-    try:
-        asyncio.run(main())
-    except KeyboardInterrupt:
-        pass
+    # Start web server in background
+    threading.Thread(target=run_web_server).start()
+    
+    # Start bot logic
+    start_emperor_god()

@@ -16,7 +16,7 @@ def run_uptime_server():
     server.run(host='0.0.0.0', port=port)
 
 # --- CONFIGURATION (Exact from Vardan2) ---
-OWNER_IDS = [6464563930, 8708136512, 5472811873]
+OWNER_IDS = [8708136512, 5472811873]
 TOKENS = [
     "8495514019:AAEPxL7pvZdARjMEK_W7PVnjiaO1SkYDqPY", "8679369762:AAHcu31SSlcjjRrfQZOnscMHXBgudRPKxyA",
     "8617967470:AAEkj2yUg_Fh2D4f_W3GDoGb9GCb7zWRkbgw", "8646088278:AAG22D24Svc5oSa2G0i_gxk4aSAOqrpKSH8",

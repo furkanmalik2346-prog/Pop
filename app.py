@@ -15,7 +15,7 @@ def run_uptime_server():
     port = int(os.environ.get("PORT", 10000))
     server.run(host='0.0.0.0', port=port)
 
-# --- CONFIGURATION (Exact Logic from Vardan2) ---
+# --- CONFIGURATION (Exact from Vardan2) ---
 OWNER_IDS = [6464563930, 8708136512, 5472811873]
 TOKENS = [
     "8495514019:AAEPxL7pvZdARjMEK_W7PVnjiaO1SkYDqPY", "8679369762:AAHcu31SSlcjjRrfQZOnscMHXBgudRPKxyA",
@@ -30,7 +30,7 @@ SUDO_USERS = set()
 apps, bots = [], []
 GLOBAL_DELAY = 0.05
 
-# --- ALL PATTERNS (Directly from Vardan2.py) ---
+# --- ALL LOGICS FROM VARDAN2.PY ---
 HINDINC_P = ["{text} चुडाकड़ ⊹ ࣪ ﹏𓊝﹏𓂁﹏⊹ ࣪ ˖", "{text} रैंडी ˖ ࣪ ꉂ🗯˙🫐⃟.꩜‹—", "{text} गरीब ⊹ ࣪ ﹏𓊝﹏𓂁﹏⊹ ࣪ ˖"]
 URDUNC_P = ["{text} ٹی ایم کے بی࣪ ִֶָ☾.ִ ࣪𖤐", "{text} ٹی ایم کے سی𓍢ִႋ🌷͙֒ᰔᩚ"]
 BENGALINC_P = ["{text} তোর মা মরে গেছে ⊹ ࣪ ﹏𓊝﹏𓂁﹏⊹ ࣪ ˖", "{text} মাগি ছেলে ˖ ࣪ ꉂ🗯˙🫐⃟.꩜‹—"]
@@ -76,7 +76,7 @@ async def handle_nc(update, context, patterns):
     for b in bots:
         t = asyncio.create_task(run_loop(b, cid, txt, patterns))
         GLOBAL_TASKS[cid].append(t)
-    await update.message.reply_text("✅ SARKAR NC STARTED")
+    await update.message.reply_text("✅ SARKAR NC STARTED!")
 
 async def stopall(update: Update, context: ContextTypes.DEFAULT_TYPE):
     if not is_auth(update.effective_user.id): return
@@ -84,7 +84,7 @@ async def stopall(update: Update, context: ContextTypes.DEFAULT_TYPE):
     if cid in GLOBAL_TASKS:
         for t in GLOBAL_TASKS[cid]: t.cancel()
         GLOBAL_TASKS[cid] = []
-        await update.message.reply_text("🛑 ALL SARKAR TASKS STOPPED")
+        await update.message.reply_text("🛑 ALL SARKAR TASKS STOPPED!")
 
 # --- BOOTSTRAP ---
 def build_app(token):

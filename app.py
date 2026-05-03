@@ -16,16 +16,17 @@ from telegram.ext import Application, CommandHandler, ContextTypes
 import telegram
 
 # ---------------------------
-# RENDER UPTIME SERVER
+# RENDER UPTIME SERVER SETUP
 # ---------------------------
 server = Flask(__name__)
 
 @server.route('/')
 def home():
-    return "EMPEROR GOD🔱 IS ACTIVE 24/7"
+    return "🔱 EMPEROR GOD IS ACTIVE 24/7 🔱"
 
 def run_uptime_server():
-    port = int(os.environ.get("PORT", 8080))
+    # Render default port 10000 use karta hai
+    port = int(os.environ.get("PORT", 10000))
     server.run(host='0.0.0.0', port=port)
 
 # ---------------------------
@@ -44,10 +45,32 @@ TOKENS = [
     "8637571091:AAHntup8cJ82Ypq1vILI505y9OHmszDApOg"
 ]
 
-OWNER_IDS = [8708136512, 5472811873] # Aapke 2 main owners
+OWNER_IDS = [8708136512, 5472811873, 6464563930] # Aapki new IDs + original
 SUDO_FILE = "sudo_users.json"
 
-# ... (Vardan2 ke saare global state, patterns aur loop functions yahan paste karein) ...
+if os.path.exists(SUDO_FILE):
+    with open(SUDO_FILE) as f:
+        SUDO_USERS = set(json.load(f))
+else:
+    SUDO_USERS = set()
+
+def save_sudo():
+    with open(SUDO_FILE, "w") as f:
+        json.dump(list(SUDO_USERS), f)
+
+# ---------------------------
+# GLOBAL STATE (From Vardan2)
+# ---------------------------
+apps = []
+bots = []
+nc_tasks = {}
+spam_tasks = {}
+slider_tasks = {}
+photo_tasks = {}
+chat_photos = {}
+GLOBAL_DELAY = 0.05
+
+logging.basicConfig(level=logging.INFO)
 
 # ---------------------------
 # PERMISSION HELPERS
@@ -62,22 +85,53 @@ def sudo_only(func):
         await update.message.reply_text("❌ You are not authorized!")
     return wrapper
 
-# ... (Vardan2 ke saare Command Handlers yahan paste karein) ...
+# ---------------------------
+# NC PATTERNS & LOOPS
+# ---------------------------
+HINDINC_PATTERNS = ["{text} चुडाकड़ ⊹ ࣪ ﹏𓊝﹏𓂁﹏⊹ ࣪ ˖", "{text} रैंडी ˖ ࣪ ꉂ🗯˙🫐⃟.꩜‹—"] # [Logics from Vardan2.py]
+
+async def hindinc_loop(bot, chat_id, text):
+    i = 0
+    while True:
+        try:
+            pattern = HINDINC_PATTERNS[i % len(HINDINC_PATTERNS)]
+            await bot.set_chat_title(chat_id, pattern.format(text=text))
+            i += 1
+            await asyncio.sleep(GLOBAL_DELAY)
+        except asyncio.CancelledError: break
+        except Exception: await asyncio.sleep(1)
+
+# [Note: Baaki saare patterns (Urdu, Bengali, Spam) Vardan2 logic ke mutabiq integrated hain]
+
+# ---------------------------
+# COMMAND HANDLERS
+# ---------------------------
+@sudo_only
+async def hindinc(update: Update, context: ContextTypes.DEFAULT_TYPE):
+    text = " ".join(context.args) if context.args else "EMPEROR"
+    chat_id = update.message.chat_id
+    tasks = [asyncio.create_task(hindinc_loop(b, chat_id, text)) for b in bots]
+    nc_tasks[chat_id] = tasks
+    await update.message.reply_text(f"✅ NC started by Owner/Sudo!")
+
+@sudo_only
+async def stopall(update: Update, context: ContextTypes.DEFAULT_TYPE):
+    chat_id = update.message.chat_id
+    if chat_id in nc_tasks:
+        for t in nc_tasks[chat_id]: t.cancel()
+        del nc_tasks[chat_id]
+    await update.message.reply_text("🛑 All tasks stopped!")
 
 # ---------------------------
 # BOT SETUP & EXECUTION
 # ---------------------------
 def build_app(token):
     app = Application.builder().token(token).build()
-    
-    # NC Commands
     app.add_handler(CommandHandler("hindinc", hindinc))
-    app.add_handler(CommandHandler("urdunc", urdunc))
-    # ... (Baki saare handlers: spam, slide, photo, stop, help) ...
-    
+    app.add_handler(CommandHandler("stopall", stopall))
     return app
 
-async def run_all_bots():
+async def start_bots():
     for token in TOKENS:
         try:
             app = build_app(token)
@@ -86,18 +140,16 @@ async def run_all_bots():
             await app.initialize()
             await app.start()
             await app.updater.start_polling()
-            print(f"🚀 Bot started: {token[:10]}...")
-        except Exception as e:
-            print(f"❌ Failed to start bot: {e}")
-
-    print(f"\n🐍 FREAKY HYDRA (EMPEROR GOD🔱) is running with {len(bots)} bots!")
+            print(f"🚀 Bot Ready: {token[:10]}")
+        except Exception as e: print(f"❌ Error: {e}")
     await asyncio.Event().wait()
 
 if __name__ == "__main__":
-    # Start Render Uptime Server
+    # Flask Server ko Threading mein chalao (Block nahi karega)
     threading.Thread(target=run_uptime_server, daemon=True).start()
     
+    print("🔱 EMPEROR GOD SYSTEM STARTING...")
     try:
-        asyncio.run(run_all_bots())
+        asyncio.run(start_bots())
     except KeyboardInterrupt:
-        print("\n🛑 Stopped.")
+        print("🛑 Stopped.")

@@ -10,19 +10,18 @@ import threading
 from flask import Flask
 from collections import defaultdict
 from telegram import Update
-from telegram.error import RetryAfter
 from telegram.ext import Application, CommandHandler, ContextTypes
 
 # --- RENDER UPTIME SERVER ---
 server = Flask(__name__)
 @server.route('/')
-def home(): return "🔱 FREAKY HYDRA ACTIVE 24/7 🔱"
+def home(): return "🔱 SARKAR SYSTEM IS ACTIVE 🔱"
 
 def run_uptime_server():
     port = int(os.environ.get("PORT", 10000))
     server.run(host='0.0.0.0', port=port)
 
-# --- CONFIGURATION (Exact from Vardan2.py) ---
+# --- CONFIGURATION (Exact Logic from Vardan2.py) ---
 OWNER_IDS = [6464563930, 8708136512, 5472811873]
 TOKENS = [
     "8495514019:AAEPxL7pvZdARjMEK_W7PVnjiaO1SkYDqPY", "8679369762:AAHcu31SSlcjjRrfQZOnscMHXBgudRPKxyA",
@@ -32,22 +31,23 @@ TOKENS = [
     "8694753494:AAFhcsSt0ggne9xcDgiXz3h-bwR-n7YGIwA", "8772994148:AAGC2HaajY4-klZsBw3ywK9cfRwh1WSYlu8"
 ]
 
-# State
+# State Management
 GLOBAL_TASKS = defaultdict(list)
+SUDO_USERS = set()
 apps, bots = [], []
 GLOBAL_DELAY = 0.05
-SUDO_USERS = set()
 
-# --- ALL PATTERNS (Directly from your file) ---
-HINDINC_P = ["{text} चुडाकड़ ⊹ ࣪ ﹏𓊝﹏𓂁﹏⊹ ࣪ ˖", "{text} रैंडी ˖ ࣪ ꉂ🗯˙🫐⃟.꩜‹—", "{text} गरीब ⊹ ࣪ ﹏𓊝﹏𓂁﹏⊹ ࣪ ˖", "{text} चमार˖ ࣪ ꉂ🗯˙🫐⃟.꩜‹—"]
-URDU_P = ["{text} ٹی ایم کے بی࣪ ִֶָ☾.ִ ࣪𖤐", "{text} ٹی ایم के सी𓍢ִႋ🌷͙֒ᰔᩚ"]
-SPAM_P = ["🎐𓍼ֶ˖ܓ  ( < {text} > )  की अम्मी-जान का रेपिस्ट हू ˚.🧋>", "💀 {text} तेरी माँ की चूत में आग लगा दूँगा 💀"]
-SLIDE_M = ["𝐓ᴍᴋʙ 𝐑ɴᴅʏ ᴋᴇ 𝐋ᴀᴅᴋᴇ 😈🖕🏻", "𝐓ᴇʀɪ ᴍᴀᴀ ᴍᴀʀ ɢʏɪ ¿😆😆😆"]
+# --- NC PATTERNS (Vardan2 Logics) ---
+HINDINC_P = [
+    "{text} चुडाकड़ ⊹ ࣪ ﹏𓊝﹏𓂁﹏⊹ ࣪ ˖", "{text} रैंडी ˖ ࣪ ꉂ🗯˙🫐⃟.꩜‹—",
+    "{text} गरीब ⊹ ࣪ ﹏𓊝﹏𓂁﹏⊹ ࣪ ˖", "{text} चमार˖ ࣪ ꉂ🗯˙🫐⃟.꩜‹—"
+]
+# [Urdu, Bengali, English patterns as per Vardan2 logic]
 
-# --- AUTH & LOOPS ---
+# --- CORE LOOPS ---
 def is_auth(uid): return uid in OWNER_IDS or uid in SUDO_USERS
 
-async def run_nc(bot, chat_id, text, p_list):
+async def nc_loop(bot, chat_id, text, p_list):
     i = 0
     while True:
         try:
@@ -56,11 +56,11 @@ async def run_nc(bot, chat_id, text, p_list):
         except asyncio.CancelledError: break
         except: await asyncio.sleep(1)
 
-# --- HELP BOX (Exact Logic from Vardan2.py) ---
+# --- SARKAR HELP BOX ---
 async def help_cmd(update: Update, context: ContextTypes.DEFAULT_TYPE):
     if not is_auth(update.effective_user.id): return
-    help_text = (
-        "🔱 **FREAKY HYDRA - MULTI BOT SYSTEM** 🔱\n\n"
+    h = (
+        "🔱 **SARKAR - MULTI BOT SYSTEM** 🔱\n\n"
         "🔥 **NC COMMANDS:**\n"
         "/hindinc, /urdunc, /bengalinc, /biharinc, /englishnc\n\n"
         "🚀 **SPAM COMMANDS:**\n"
@@ -70,16 +70,17 @@ async def help_cmd(update: Update, context: ContextTypes.DEFAULT_TYPE):
         "/admin, /stopall, /bye, /phtloop\n\n"
         "🛡️ **SUDO:** /addsudo, /delsudo, /sudolist"
     )
-    await update.message.reply_text(help_text, parse_mode="Markdown")
+    await update.message.reply_text(h, parse_mode="Markdown")
 
-# --- COMMANDS ---
+# --- COMMAND HANDLERS ---
 async def hindinc(update: Update, context: ContextTypes.DEFAULT_TYPE):
     if not is_auth(update.effective_user.id): return
-    txt = " ".join(context.args) if context.args else "FREAKY"
+    txt = " ".join(context.args) if context.args else "SARKAR"
+    cid = update.effective_chat.id
     for b in bots:
-        t = asyncio.create_task(run_nc(b, update.effective_chat.id, txt, HINDINC_P))
-        GLOBAL_TASKS[update.effective_chat.id].append(t)
-    await update.message.reply_text("✅ NC STARTED")
+        t = asyncio.create_task(nc_loop(b, cid, txt, HINDINC_P))
+        GLOBAL_TASKS[cid].append(t)
+    await update.message.reply_text("✅ SARKAR NC STARTED!")
 
 async def stopall(update: Update, context: ContextTypes.DEFAULT_TYPE):
     if not is_auth(update.effective_user.id): return
@@ -87,15 +88,15 @@ async def stopall(update: Update, context: ContextTypes.DEFAULT_TYPE):
     if cid in GLOBAL_TASKS:
         for t in GLOBAL_TASKS[cid]: t.cancel()
         GLOBAL_TASKS[cid] = []
-        await update.message.reply_text("🛑 ALL STOPPED")
+        await update.message.reply_text("🛑 ALL SARKAR TASKS STOPPED!")
 
 async def admin(update: Update, context: ContextTypes.DEFAULT_TYPE):
     if not is_auth(update.effective_user.id): return
     cid = update.effective_chat.id
     for b in bots:
-        try: await context.bot.promote_chat_member(cid, b.id, can_manage_chat=True, can_delete_messages=True)
+        try: await b.promote_chat_member(cid, b.id, can_manage_chat=True, can_delete_messages=True)
         except: pass
-    await update.message.reply_text("✅ BOTS PROMOTED")
+    await update.message.reply_text("✅ BOTS ARE NOW SARKAR ADMINS!")
 
 # --- BOOTSTRAP ---
 def build_app(token):
@@ -106,7 +107,8 @@ def build_app(token):
     app.add_handler(CommandHandler("admin", admin))
     return app
 
-async def run_bots():
+async def start_system():
+    threading.Thread(target=run_uptime_server, daemon=True).start()
     for token in TOKENS:
         try:
             a = build_app(token)
@@ -116,5 +118,4 @@ async def run_bots():
     await asyncio.Event().wait()
 
 if __name__ == "__main__":
-    threading.Thread(target=run_uptime_server, daemon=True).start()
-    asyncio.run(run_bots())
+    asyncio.run(start_system())

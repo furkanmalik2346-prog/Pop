@@ -21,13 +21,19 @@ OWNER_IDS = [6464563930, 8708136512, 5472811873]
 TOKENS = [
     "8495514019:AAEPxL7pvZdARjMEK_W7PVnjiaO1SkYDqPY", 
     "8679369762:AAHcu31SSlcjjRrfQZOnscMHXBgudRPKxyA",
-    "8617967470:AAEkj2yUg_Fh2D4f_W3GDoGb9GCb7zWRkbgw" # Add all tokens here
+    "8617967470:AAEkj2yUg_Fh2D4f_W3GDoGb9GCb7zWRkbgw",
+    "8646088278:AAG22D24Svc5oSa2G0i_gxk4aSAOqrpKSH8",
+    "8664765661:AAG1905q_kKYpvjziAqowS541IyL3b6R45M",
+    "8628262412:AAEKuSEFaFSrdVsqDeoethOG4dGi7CYvtD0",
+    "8788043288:AAHErN8BVDoxioh7I9DN66JcAbHv20ttHEQ",
+    "8072658978:AAF_9XFXWwbHba-4jg70lbj5-Y1PdXUdQrg",
+    "8694753494:AAFhcsSt0ggne9xcDgiXz3h-bwR-n7YGIwA",
+    "8772994148:AAGC2HaajY4-klZsBw3ywK9cfRwh1WSYlu8"
 ]
 
 GLOBAL_TASKS = defaultdict(list)
 SUDO_USERS = set()
-bots = []
-GLOBAL_DELAY = 0.5  # Thoda delay badhaya hai taaki FloodWait na aaye
+BOT_CLIENTS = [] # Isme bots save honge commands ke liye
 
 NC_PATTERNS = {
     "hindi": ["{text} चुडाकड़ ⊹ ࣪ ﹏𓊝﹏𓂁﹏⊹ ࣪ ˖", "{text} रैंडी ˖ ࣪ ꉂ🗯˙🫐⃟.꩜‹—"],
@@ -37,47 +43,35 @@ NC_PATTERNS = {
     "english": ["{text} YOU SON OF BITCH ⊹ ࣪ ﹏𓊝﹏𓂁﹏⊹ ࣪ ˖"]
 }
 
-def is_auth(uid): 
-    return uid in OWNER_IDS or uid in SUDO_USERS
+def is_auth(uid): return uid in OWNER_IDS or uid in SUDO_USERS
 
-# --- CORE TASK ---
-async def task_loop(bot, chat_id, text, patterns, mode="title"):
+# --- CORE FUNCTIONS ---
+async def task_loop(bot, chat_id, text, patterns):
     i = 0
     while True:
         try:
             p = patterns[i % len(patterns)]
-            content = p.format(text=text)
-            if mode == "title": 
-                await bot.set_chat_title(chat_id, content)
-            else: 
-                await bot.send_message(chat_id, content)
+            await bot.send_message(chat_id, p.format(text=text))
             i += 1
-            await asyncio.sleep(GLOBAL_DELAY)
-        except asyncio.CancelledError: 
-            break
-        except Exception as e:
-            print(f"Error in loop: {e}")
-            await asyncio.sleep(2)
+            await asyncio.sleep(0.8) # Rate limit se bachne ke liye delay
+        except asyncio.CancelledError: break
+        except Exception: await asyncio.sleep(2)
 
 # --- HANDLERS ---
-async def help_cmd(update: Update, context: ContextTypes.DEFAULT_TYPE):
-    if not is_auth(update.effective_user.id): return
-    h = "🔱 **SARKAR SYSTEM ACTIVE** 🔱\n\n/hindinc, /urdunc, /bengalinc, /stopall"
-    await update.message.reply_text(h, parse_mode="Markdown")
-
 async def start_nc(update: Update, context: ContextTypes.DEFAULT_TYPE, key: str):
     if not is_auth(update.effective_user.id): return
     txt = " ".join(context.args) if context.args else "SARKAR"
     cid = update.effective_chat.id
     
-    # Pehle puraane tasks stop karein
+    # Purane tasks band karo
     if cid in GLOBAL_TASKS:
         for t in GLOBAL_TASKS[cid]: t.cancel()
+        GLOBAL_TASKS[cid] = []
 
-    for b in bots:
+    for b in BOT_CLIENTS:
         t = asyncio.create_task(task_loop(b, cid, txt, NC_PATTERNS[key]))
         GLOBAL_TASKS[cid].append(t)
-    await update.message.reply_text(f"✅ {key.upper()} STARTED ON ALL BOTS!")
+    await update.message.reply_text(f"✅ {key.upper()} STARTED!")
 
 async def stopall(update: Update, context: ContextTypes.DEFAULT_TYPE):
     if not is_auth(update.effective_user.id): return
@@ -85,36 +79,39 @@ async def stopall(update: Update, context: ContextTypes.DEFAULT_TYPE):
     if cid in GLOBAL_TASKS:
         for t in GLOBAL_TASKS[cid]: t.cancel()
         del GLOBAL_TASKS[cid]
-        await update.message.reply_text("🛑 STOPPED!")
+        await update.message.reply_text("🛑 ALL STOPPED!")
 
-# --- BOT RUNNER ---
-async def run_bot(token):
-    app = Application.builder().token(token).build()
-    
-    # Handlers (Using partial to pass extra args)
-    app.add_handler(CommandHandler("help", help_cmd))
-    app.add_handler(CommandHandler("hindinc", partial(start_nc, key="hindi")))
-    app.add_handler(CommandHandler("urdunc", partial(start_nc, key="urdu")))
-    app.add_handler(CommandHandler("bengalinc", partial(start_nc, key="bengali")))
-    app.add_handler(CommandHandler("stopall", stopall))
-    
-    bots.append(app.bot)
-    
-    await app.initialize()
-    await app.start()
-    await app.updater.start_polling(drop_pending_updates=True)
-    # Loop indefinitely for this specific bot
-    await asyncio.Event().wait()
+# --- BOT BOOTSTRAP ---
+async def start_bot(token):
+    try:
+        app = Application.builder().token(token).build()
+        
+        # Add Handlers
+        app.add_handler(CommandHandler("hindinc", partial(start_nc, key="hindi")))
+        app.add_handler(CommandHandler("urdunc", partial(start_nc, key="urdu")))
+        app.add_handler(CommandHandler("bengalinc", partial(start_nc, key="bengali")))
+        app.add_handler(CommandHandler("stopall", stopall))
+        
+        BOT_CLIENTS.append(app.bot)
+        
+        await app.initialize()
+        await app.start()
+        await app.updater.start_polling(drop_pending_updates=True)
+        print(f"Bot started with token: {token[:10]}...")
+        await asyncio.Event().wait()
+    except Exception as e:
+        print(f"Error starting bot {token[:10]}: {e}")
 
 async def main():
+    # Start Flask in background
     threading.Thread(target=run_uptime_server, daemon=True).start()
     
-    # Sab bots ko parallel tasks mein chalana
-    tasks = [run_bot(t) for t in TOKENS]
+    # Har token ke liye alag async task
+    tasks = [start_bot(token) for token in TOKENS]
     await asyncio.gather(*tasks)
 
 if __name__ == "__main__":
     try:
         asyncio.run(main())
-    except KeyboardInterrupt:
+    except (KeyboardInterrupt, SystemExit):
         pass

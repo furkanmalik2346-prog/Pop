@@ -1,3 +1,4 @@
+# app.py - Render-ready Complete Script
 import asyncio
 import json
 import os
@@ -14,39 +15,40 @@ from threading import Thread
 # ---------------------------
 # WEB SERVER FOR RENDER (PORT BINDING)
 # ---------------------------
-server = Flask('')
+app = Flask('')
 
-@server.route('/')
+@app.route('/')
 def home():
-    return "Miss Lee Multi-Bot System is Running 24/7!"
+    return "The Freaky Muse Multi-Bot System is Running 24/7!"
 
 def run_flask():
     port = int(os.environ.get("PORT", 8080))
-    server.run(host='0.0.0.0', port=port)
+    app.run(host='0.0.0.0', port=port)
 
 def keep_alive():
     t = Thread(target=run_flask)
     t.start()
 
 # ---------------------------
-# YOUR UPDATED BOT TOKENS
+# YOUR 10 BOT TOKENS
 # ---------------------------
 TOKENS = [
-    "8054787825:AAEvUZl81wmAt7ESLfIyIah3KM3b2VtUPwU",
-    "8775299962:AAFleIcf08zXhGFpvmVpi2nupJvYeQQ4yRU",
-    "8578335907:AAE38TOWuyA38JzIuWGpahB0qHzxeaEzK6k",
-    "8717410607:AAEFtU0qV-iQET0Eh2zG575sBvXeQXUkauk",
-    "8767414110:AAHscaAbopDBn25-cWORrNwiWi56sPfzFPs",
-    "8378067740:AAErjhjNpjvPCnfCyj456fEIB522UfP-jpw",
-    "8742165048:AAHqDDSAHoc3sEKTS_oO2LS8nAisDMeSwM8",
-    "8753508680:AAFzDvmSE8QzMQIyNw9p8PaePQhw080CwyU",
-    "8340889439:AAEEf-WJLtHzMQ3pz7ugqvRBMBUCAls_sdI"
+    "8615633587:AAE_iSNVgMHHu8oRuKZsdWM1o6AZhKPMnfs",
+    "8115841323:AAFyAg3yJVl3hgbsvsGQlHZsIBNj9hdaX0o",
+    "8550488602:AAF7e3hnMy5hZc2cZ3SquzSf-mxUcv7LMOM",
+    "8799799389:AAGiNhvJvopHRfzIkRI4yAh6jgw5__Icmic",
+    "7848194644:AAHWp5QnryYlybpIr-AIriJFZFMXjNP1lCk",
+    "8635896580:AAFIR8hjy12CADPgYqCjq4WrqbyGgnoUJmA",
+    "8707168681:AAHXnAUVknkW8nKjQyjcg1a9nPCcw8o46lk",
+    "8527582256:AAFAiQjOUn_wiuBjj8X9Fw6cmTgtB4AL9Sc",
+    "8586338886:AAECXijuZKVS1qqsOq8E-ch5GIS23E2PMFM",
+    "8633221954:AAEFUIVuIO9UPvQ9PoikmUVH4L7Lr6WqiCM",
 ]
 
 # ---------------------------
 # OWNER & SUDO CONFIG
 # ---------------------------
-OWNER_ID = 8708136512  
+OWNER_ID = 8389568613
 SUDO_FILE = "sudo_users.json"
 
 if os.path.exists(SUDO_FILE):
@@ -97,33 +99,61 @@ def sudo_only(func):
         await update.message.reply_text("𝐆𝐔𝐋𝐀𝐌𝐈 𝐊𝐑 𝐏𝐇𝐋𝐄 𝐅𝐈𝐑 𝐒𝐔𝐃𝐎 𝐌𝐈𝐋𝐄𝐆𝐀 😂")
     return wrapper
 
-# --- EMOJIS & WORD LISTS ---
+# ---------------------------
+# NC EMOJI LISTS
+# ---------------------------
 DARK_EMOJIS = ["🕳️", "🌑", "👣", "🗝️", "🧬", "🔌", "⬛", "🦾", "📜", "🕯️", "🍷", "🥀", "🖤", "🕸️", "🗡️", "🎱", "🐦‍⬛", "🔮", "🌑", "🪄", "🌝", "🌚", "🌜", "🌛", "🌙", "⭐", "🌟", "✨", "🪐", "🌍", "🌠", "🌌", "☄️", "🌑", "🌒", "🌓", "🌔", "🌕", "🌖", "🌗", "🌘"]
 HAND_EMOJIS = ["👀", "👁️", "👄", "🫦", "👅", "👃🏻", "👂🏻", "🦻🏻", "🦶🏻", "🦵🏻", "🦿", "🦾", "💪🏻", "👏🏻", "👍🏻", "👎🏻", "🫶🏻", "🙌🏻", "👐🏻", "🤲🏻", "🤜🏻", "🤛🏻", "✊🏻", "👊🏻", "🫳🏻", "🫴🏻", "🫱🏻", "🫲🏻", "🫸🏻", "🫷🏻", "👋🏻", "🤚🏻", "🖐🏻", "✋🏻", "🖖🏻", "🤟🏻", "🤘🏻", "✌🏻", "🤞🏻", "🫰🏻", "🤙🏻", "🤌🏻", "🤏🏻", "👌🏻", "🫵🏻", "👉🏻", "👈🏻", "☝🏻", "👆🏻", "👇🏻", "🖕🏻", "✍🏻", "🤳🏻", "🙏🏻", "💅🏻", "🤝🏼", "🌘"]
 MARVEL_EMOJIS = ["🛡️", "🇺🇸", "🎖️", "🦾", "🚀", "⚡", "🤖", "⚡", "🔨", "🌩️", "🔱", "🕷️", "🕶️", "🔫", "🥀", "🏹", "🎯", "🦅", "🧪", "☢️", "👊", "🟢", "💎", "🤖", "🟡"]
 MAGIC_EMOJIS = ["🧪", "⚗️", "📜", "💎", "🕳️", "🌑", "🧿", "🐦‍⬛", "🌀", "⚡", "🪄", "🧿", "🕯️", "📜", "🏛️", "🖤", "✥", "♱", "⚖︎", "∞", "𖦹"]
 NATURE_EMOJIS = ["💐", "🌹", "🥀", "🌺", "🌷", "🪷", "🌸", "💮", "🏵️", "🪻", "🌻", "🌼", "🍂", "🍁", "🍄", "🌾", "🌿", "🌱", "🍃", "☘️", "🍀", "🪴", "🌵", "🌴", "🪾", "🌳", "🌲", "🪵", "🪹", "🪺"]
 FOOD_EMOJIS = ["🍧", "🧋", "🧃", "🥛", "🍿", "🧊", "🍵", "☕", "🍻", "🍺", "🧉", "🫖", "🍾", "🍷", "🥃", "🫗", "🍸", "🍹", "🍶", "🥢", "🥂", "🧈", "🧁", "🍭", "🍬", "🍫", "🍨", "🍡", "🍙", "🍥", "🥠", "🥟", "🍛", "🍤", "🍜", "🦪", "🍚", "🥣", "🥫", "🌯"]
-FACE_EMOJIS = ["☺️", "😌", "🙂‍↕️", "🙂‍↔️", "😏", "🤤", "😋", "😛", "😝", "😜", "🤪", "😔", "🥺", "😬", "😑", "😐", "😶", "😶‍頨", "🫥", "🤐", "🫡", "🤔", "🤫", "🫢", "🤭", "🥱", "🤗", "🫣", "😱", "🤨", "🧐", "😒", "🙄", "😮‍💨", "😤", "😠", "😡", "🤬", "😞", "😓", "😟", "😥", "😢", "☹️", "🙁", "🫤", "😕", "😰", "😨", "😧", "😦", "😮", "😯", "😲", "🤯", "🫨", "😵‍💫", "😵", "😫", "🥴", "🥶", "🥵"]
+FACE_EMOJIS = ["☺️", "😌", "🙂‍↕️", "🙂‍↔️", "😏", "🤤", "😋", "😛", "😝", "😜", "🤪", "😔", "🥺", "😬", "😑", "😐", "😶", "😶‍🌫️", "🫥", "🤐", "🫡", "🤔", "🤫", "🫢", "🤭", "🥱", "🤗", "🫣", "😱", "🤨", "🧐", "😒", "🙄", "😮‍💨", "😤", "😠", "😡", "🤬", "😞", "😓", "😟", "😥", "😢", "☹️", "🙁", "🫤", "😕", "😰", "😨", "😧", "😦", "😮", "😯", "😲", "🤯", "🫨", "😵‍💫", "😵", "😫", "🥴", "🥶", "🥵"]
 HOBBY_EMOJIS = ["🃏", "🪄", "🎩", "📷", "🀄", "🎴", "🎰", "📸", "🖼️", "🎨", "🫟", "🖌️", "🖍️", "🪡", "🧵", "🧶", "🎹", "🎷", "🎺", "🎸", "🪕", "🎻", "🪉", "🪘", "🥁", "🪇", "🪈", "🪗", "🎤", "🎧", "🎚️", "🎛️", "🎙️", "📼", "📻", "📺", "📹", "📽️", "🎥", "🎞️", "🎬", "🎭", "🎫", "🎟️"]
 TECH_EMOJIS = ["🔋", "🪫", "🖲️", "💽", "💾", "💿", "📀", "🖥️", "💻", "⌨️", "🖨️", "🖱️", "🪙", "💎", "💸", "💵", "💴", "💶", "💷", "💳", "💰", "🧾", "🧮", "⚖️", "🛒", "🛍️", "💡", "🕯️", "🔦", "🏮", "🧱", "🪟", "🪞", "🚪", "🚿", "🛁", "🚽", "🧻", "🪠", "🧸", "🪆", "🧷", "🪢", "🧹", "🧴", "🧽", "🧼", "🪥", "🪒", "🪮", "🧺", "🧦", "🧤", "🧣", "👖"]
-ANIMAL_EMOJIS = ["🪼", "🐚", "🦋", "🐞", "🐝", "🐛", "🪱", "🦠", "🐾", "🫧", "🪸", "🦪", "🪼", "🐙", "🦑", "🐡", "🐠", "🐟", "🐳", "🐋", "🐬", "🦈", "🦭", "🐧", "🦃", "🐦‍🔥", "🦚", "🦩", "🪿", "🦆", "🦢", "🦤", "🕊️", "🦜", "🦉", "🦅", "🐥", "🐤", "🐣", "🐓", "🐦", "🪶", "🪽", "🦇", "🦦", "🦔", "🦡", "🦨", "🐅", "🐆", "🦒", "🦏", "🦣", "Elephant", "🦧", "🦘", "🦥", "🦬", "🐃", "🐏", "🐂", "🐄", "🐎", "🐈", "🐩"]
+ANIMAL_EMOJIS = ["🪼", "🐚", "🦋", "🐞", "🐝", "🐛", "🪱", "🦠", "🐾", "🫧", "🪸", "🦪", "🪼", "🐙", "🦑", "🐡", "🐠", "🐟", "🐳", "🐋", "🐬", "🦈", "🦭", "🐧", "🦃", "🐦‍🔥", "🦚", "🦩", "🪿", "🦆", "🦢", "🦤", "🕊️", "🦜", "🦉", "🦅", "🐥", "🐤", "🐣", "🐓", "🐦", "🪶", "🪽", "🦇", "🦦", "🦔", "🦡", "🦨", "🐅", "🐆", "🦒", "🦏", "🦣", "🐘", "🦓", "🦘", "🦥", "🦬", "🐃", "🐏", "🐂", "🐄", "🐎", "🐈", "🐩"]
 
-TYPENC_WORDS = ["𝗧𝗔𝗧𝗧𝗘", "𝗚𝗨𝗟𝗔𝗠", "𝗠𝗔𝗗𝗔𝗥𝗖𝗛𝗢𝗗", "𝗕𝗛𝗘𝗡𝗞𝗟𝗡𝗗", "𝗧𝗠𝗞𝗖", "𝗧𝗠𝗞𝗕", "𝗥𝗡𝗗𝗬", "𝗚𝗔𝗥𝗘𝗘𝗕", "𝗠𝗜𝗦𝗧𝗜 𝗞𝗘 𝗟𝗔𝗗𝗞𝗘", "𝗚𝗡𝗗𝗨", "𝗖𝗛𝗔𝗣𝗥𝗜", "𝗖𝗛𝗠🇷", "𝗕𝗦🇩🇰", "𝗞𝗘𝗘𝗗𝗘", "𝗖𝗛🇺🇩", "𝗧𝗕𝗞𝗟", "𝗛𝗔𝗥𝗔𝗠𝗞𝗛𝗢𝗥", "𝗥🇷 𝗠𝗧 𝗞🇷", "𝗧🇪🇷🇮 𝗠𝗔𝗔 𝗠🇦🇷 𝗚𝗬🇮", "𝗧🇪🇷🇮 𝗕🇭🇪🇳 𝗖🇭🇺🇩𝗚𝗬🇮", "𝗚🇺🇱𝗔𝗠🇮 𝗞🇷"]
+TYPENC_WORDS = [
+    "𝗧𝗔𝗧𝗧𝗘", "𝗚𝗨🇱𝗔𝗠", "𝗠𝗔𝗗𝗔𝗥𝗖𝗛𝗢𝗗", "𝗕𝗛𝗘𝗡𝗞🇱𝗡🇩", "𝗧𝗠𝗞🇨", "𝗧𝗠𝗞𝗕",
+    "培育🇩𝗬", "𝗚𝗔𝗥🇪🇪𝗕", "𝗠🇮𝗦𝗧🇮 𝗞🇪 🇱𝗔𝗗𝗞🇪", "𝗚🇳🇩🇺", "𝗖🇭𝗔𝗣𝗥🇮", "𝗖🇭🇲🇷",
+    "𝗕𝗦🇩🇰", "𝗞🇪🇪🇩🇪", "𝗖🇭🇺🇩", "𝗧🇧𝗞🇱", "𝗛𝗔𝗥𝗔𝗠𝗞🇭𝗢𝗥", "🇷🇷 𝗠𝗧 𝗞🇷",
+    "𝗧🇪🇷🇮 𝗠𝗔𝗔 𝗠🇦🇷 𝗚𝗬🇮", "𝗧🇪🇷🇮 𝗕🇭🇪🇳 𝗖🇭🇺🇩𝗚𝗬🇮", "𝗚🇺🇱𝗔𝗠🇮 𝗞🇷"
+]
 
-ALEXA_TEXTS = ["𝗔package 🇮🇳𝗦𝗦 𝗠🇨 🇰🇮 𝗠𝗔𝗔 𝗞𝗘 𝗡𝗢𝗧🇪𝗦 𝗗🇮𝗞𝗛🇦𝗢 🙁", "𝗔𝗟🇪𝗫𝗔 🇮🇳𝗦𝗦 👑𝗗𝗬 𝗞🇦 𝗠🇺𝗛 𝗕🇳🇩 𝗞🇷𝗗𝗢 😆", "𝗔package 🇮🇳𝗦🇰🇮 𝗕🇭🇪🇳 𝗖🇭𝗢🇩 𝗗𝗢 🌙", "𝗔𝗟🇪𝗫𝗔 🇮🇳𝗦🇰🇪 𝗕🇦‌🇦🇵 𝗞🇮 𝗚🇳🇩 𝗠🇮🇪 𝗟🇦𝗧🇭 𝗗🇦🇦𝗟 𝗗𝗢 😆", "𝗔package 🇮🇳𝗦🇰🇦 𝗚🇦𝗠🇪 𝗢𝐕🇪🇷 𝗞🇦 𝗩🇮🇩🇪𝗢 𝗗𝗢🇳🇪 𝗞🇷𝗢 🥹"]
-ANIMAL_TEXTS = ["𝗢𝗬🇪 𝗧🇲🇰🇨 𝗠🇮🇪 𝗚𝗢𝗥🇮🇱🇱🇦  🦍", "𝗢𝗬🇪 𝗧🇪🇷🇮 𝗕🇭🇪🇳 𝗞🇮 𝗖🇭🇺🇹 𝗠🇮🇪 𝗚🇭𝗢🇩🇦 🐎", "𝗢𝗬🇪 𝗧🇪🇷🇪 𝗕🇦🇦🇵 𝗞🇮 𝗚\u200e🇳🇩 𝗠🇮🇪 𝗞🇦🇳🇬🇦🇷𝗢𝗢 🦘", "𝗢𝗬🇪 𝗧🇪🇷🇮 𝗚🇳🇩 𝗠🇮🇪 𝗖🇦𝗠🇪𝗟 🐪", "𝗢𝗬🇪 𝗧🇺 𝗝🇦🇳𝗪🇦🇷𝗢 𝗦🇪 𝗖🇭🇺🇩 𝗚𝗬🇦 ? 😆😆😆"]
-SWIPE_TEXTS = ["𝗧🇪🇷🇮 𝗠🇰🇨 𝗦🇦𝗦𝗧🇮 𝗛🇦🇮 𝗕🇦🇦𝗧 𝗞🇭𝗧🇲 😡", "𝗖🇭🇱 𝗚🇺🇱𝗔🇲🇮 𝗞🇷 𝗧🇦𝗧𝗧🇪 😆", "𝗖🇭🇮🇩🇮𝗬🇦 𝗖🇭🇦🇩🇮 🇵🇭🇦🇦🇩 🇵🇪 🇺𝗦🇳🇪 𝗗🇮𝗬🇦 𝗠🇺🇹 𝗧🇲🇰🇨 😆", "🇪𝗞 𝗟🇦🇦‌𝗧 𝗠🇮🇪 𝗟🇳🇩 𝗖🇭🇦𝗧𝗧🇦 𝗙🇮🇷🇪𝗚🇦 𝗕𝗦🇩🇰 😆"]
+ALEXA_TEXTS = [
+    "𝗔package 🇮🇳𝗦𝗦 𝗠🇨 🇰🇮 𝗠𝗔𝗔 𝗞𝗘 🇳𝗢𝗧🇪𝗦 𝗗🇮𝗞🇭🇦𝗢 🙁",
+    "𝗔package 🇮🇳𝗦𝗦 👑𝗗𝗬 𝗞🇦 𝗠🇺🇭 𝗕🇳🇩 𝗞🇷𝗗𝗢 😆",
+    "𝗔package 🇮🇳𝗦🇰🇮 𝗕🇭🇪🇳 𝗖🇭𝗢🇩 𝗗𝗢 🌙",
+    "𝗔package 🇮🇳𝗦🇰🇪 𝗕🇦‌🇦🇵 𝗞🇮 𝗚🇳🇩 𝗠🇮🇪 🇱🇦𝗧🇭 𝗗🇦🇦🇱 𝗗𝗢 😆",
+    "𝗔package 🇮🇳𝗦🇰🇦 𝗚🇦𝗠🇪 𝗢𝐕🇪🇷 𝗞🇦 𝗩🇮🇩🇪𝗢 𝗗𝗢🇳🇪 𝗞🇷𝗢 🥹"
+]
 
-TEXTS_PATTERN = "{text}  𝑶𝒀𝑬 𝑩𝑲𝑳 𝑻𝑬𝑹𝑰 𝑴𝑨𝑨 𝑲𝑨 𝑲𝑯𝑨𝑺𝑨𝑴 𝑯𝑼 𝑨𝑼𝑲𝑨𝑻 𝑴𝑰𝑬 𝑹𝑯 𝑹𝑵𝑫𝒀 𝑷𝑼𝑻𝑹𝑨 ☲☲☲☲☲☲☲☲☲☲☲☲☲☲☲☲☲☲☲☲☲☲☲☲☲☲☲☲☲☲☲☲☲☲☲☲☲☲☲☲☲☲☲☲☲☲☲☲\\~   "
+ANIMAL_TEXTS = [
+    "𝗢𝗬🇪 替代🇲🇰🇨 𝗠🇮🇪 𝗚𝗢𝗥🇮🇱🇱🇦  🦍",
+    "𝗢𝗬🇪 𝗧🇪🇷🇮 𝗕🇭🇪🇳 𝗞🇮 𝗖🇭🇺🇹 𝗠🇮🇪 𝗚🇭𝗢🇩🇦 🐎",
+    "𝗢𝗬🇪 𝗧🇪🇷🇪 𝗕🇦🇦🇵 𝗞🇮 𝗚\u200e🇳🇩 𝗠🇮🇪 𝗞🇦🇳🇬🇦🇷𝗢𝗢 🦘",
+    "𝗢𝗬🇪 𝗧🇪🇷🇮 𝗚🇳🇩 𝗠🇮🇪 𝗖🇦𝗠🇪🇱 🐪",
+    "𝗢𝗬🇪 𝗧🇺 𝗝🇦🇳𝗪🇦🇷𝗢 𝗦🇪 𝗖🇭🇺🇩 𝗚𝗬🇦 ? 😆😆😆"
+]
+
+SWIPE_TEXTS = [
+    "𝗧🇪🇷🇮 𝗠🇰🇨 𝗦🇦𝗦𝗧🇮 𝗛🇦🇮 𝗕🇦🇦𝗧 𝗞🇭𝗧🇲 😡",
+    "𝗖🇭🇱 𝗚🇺🇱𝗔🇲🇮 𝗞🇷 𝗧🇦𝗧𝗧🇪 😆",
+    "𝗖🇭🇮🇩🇮𝗬🇦 𝗖🇭🇦🇩🇮 🇵🇭🇦🇦🇩 🇵🇪 🇺𝗦🇳🇪 𝗗🇮𝗬🇦 𝗠🇺🇹 替代🇲🇺🇹 😆",
+    "🇪𝗞 🇱🇦🇦‌𝗧 𝗠🇮🇪 👑🇳🇩 𝗖🇭🇦𝗧𝗧🇦 𝗙🇮🇷🇪𝗚🇦 𝗕𝗦🇩🇰 😆"
+]
+
+TEXTS_PATTERN = "{text}  𝑶𝒀𝑬 𝑩𝑲𝑳 𝑻𝑬𝑹𝑰 𝑴𝑨𝑨 𝑲𝑨 𝑲𝑯𝑨𝑺𝑨𝑴 𝑯𝑼 𝑨𝑼𝑲𝑨𝑻 𝑴𝑰𝑬 𝑹𝑯 𝑹𝑵打𝒀 𝑷𝑼𝑻𝑹𝑨 ☲☲☲☲☲☲☲☲☲☲☲☲☲☲☲☲☲☲☲☲☲☲☲☲☲☲☲☲☲☲☲☲☲☲☲☲☲☲☲☲☲☲☲☲☲☲☲☲\\~   "
 TEXTS_REPEAT = 10
+
 SHAYARI_PATTERN = "𝙏𝙄𝙆 𝙏𝙄𝙆 𝘾𝙃𝙇𝙏𝘼 𝙂𝙃𝙊𝘿𝘼 {text} 𝙆𝙄 𝘽𝙃𝙀𝙉 𝙆𝘼 𝙇𝙊𝘿𝘼 ╍╍╍╍╍╍╍╍╍╍╍╍╍╍╍╍╍╍╍╍╍╍╍╍╍╍╍╍╍╍╍╍╍╍╍╍╍╍╍╍╍╍╍╍╍╍╍╍╍╍╍╍╍╍╍╍╍ "
 SHAYARI_REPEAT = 10
-SONGY_PATTERN = "{text} 𝗗𝗮𝗹𝗹𝗲!\n𝗕𝗲𝘁𝗮 𝗗𝗮𝗹𝗹𝗲 𝗕𝗲𝗻𝗶 𝗕𝗮𝗮𝗽 𝗧𝗲𝗿𝗮 𝗡𝗮𝗹𝗹𝗮 𝗛𝗮𝗶\n𝗟*д𝗮 𝗛𝗼𝗼𝗸𝗮𝗵 𝗠𝗲ｒａ..."
-CUSTOM_PATTERN = "{text}  ⩇⩇:⩇⩇ {kaomoji}"
-CUSTOM_KAOMOJI = ["(◕‿◕)", "(✿◠‿◠)", "(◔‿◔)", "(─‿─)", "😊", "😄"]
 
-# --- LOOPS (NC, SPAM, SLIDER) ---
+SONGY_PATTERN = """{text} 𝗗𝗮𝗹𝗹𝗲!\n𝗕𝗲𝘁𝗮 𝗗𝗮𝗹𝗹𝗲 𝗕𝗲𝗻𝗶 𝗕𝗮𝗮𝗽 𝗧𝗲𝗿𝗮 𝗡𝗮𝗹𝗹𝗮 𝗛𝗮𝗶\n𝗟*𝗱𝗮 𝗛𝗼𝗼𝗸𝗮𝗵 𝗠𝗲ｒ𝗮..."""
+CUSTOM_PATTERN = "{text}  ⩇⩇:⩇⩇ {kaomoji}"
+CUSTOM_KAOMOJI = ["(◕‿◕)", "(✿◠‿◠)", "(◔‿◔)", "😊", "😄", "😁"]
+
+# --- NC LOOPS ---
 async def ncdark_loop(bot, chat_id, text):
     i = 0
     while True:
@@ -225,7 +255,7 @@ async def emognc_loop(bot, chat_id, text):
     while True:
         try:
             emoji = FACE_EMOJIS[i % len(FACE_EMOJIS)]
-            await bot.set_chat_title(chat_id, f"{text} 换𝙀𝘿𝙀 𝘼🇺换𝘼𝙏 𝘽🇳🇦⁀➴♡ {emoji}")
+            await bot.set_chat_title(chat_id, f"{text} 换𝙀𝘿𝙀 𝘼🇺换𝘼🇹 𝘽🇳🇦⁀➴♡ {emoji}")
             i += 1
             await asyncio.sleep(GLOBAL_DELAY)
         except asyncio.CancelledError: break
@@ -285,13 +315,14 @@ async def foxync_loop(bot, chat_id, text):
     while True:
         try:
             emoji = ANIMAL_EMOJIS[i % len(ANIMAL_EMOJIS)]
-            await bot.set_chat_title(chat_id, f"{text} 𝗖🇭🇺🇩 𝗞🇷 𝗗🇦𝗙🇦𝗡~{emoji}")
+            await bot.set_chat_title(chat_id, f"{text} 𝗖🇭🇺🇩 𝗞🇷 𝗗🇦𝗙🇦🇳~{emoji}")
             i += 1
             await asyncio.sleep(GLOBAL_DELAY)
         except asyncio.CancelledError: break
         except RetryAfter as e: await asyncio.sleep(e.retry_after)
         except Exception: await asyncio.sleep(1)
 
+# --- SPAM LOOPS ---
 async def texts_spam_loop(bot, chat_id, text):
     msg = (TEXTS_PATTERN.format(text=text) + "\n") * TEXTS_REPEAT
     while True:
@@ -337,7 +368,7 @@ async def make_slider_loop(texts, bot, chat_id, target_msg_id):
         except RetryAfter as e: await asyncio.sleep(e.retry_after)
         except Exception: await asyncio.sleep(1)
 
-# --- HANDLERS SETUP ---
+# --- AUTO HANDLER ---
 async def handle_my_chat_member(update: Update, context: ContextTypes.DEFAULT_TYPE):
     result: ChatMemberUpdated = update.my_chat_member
     if result.chat.type not in ["group", "supergroup"]: return
@@ -348,6 +379,7 @@ async def handle_my_chat_member(update: Update, context: ContextTypes.DEFAULT_TY
     elif old.status == ChatMember.MEMBER and new.status == ChatMember.ADMINISTRATOR:
         await context.bot.send_message(chat_id=result.chat.id, text=ADMIN_MESSAGE)
 
+# --- TASK STARTERS ---
 async def start_nc(func, update, context, name):
     if not context.args: return await update.message.reply_text(f"❌ Usage: /{name} <text>")
     text = " ".join(context.args)
@@ -375,6 +407,7 @@ async def start_slider(texts, update, context, name):
     slider_tasks[chat_id] = [asyncio.create_task(make_slider_loop(texts, b, chat_id, target)) for b in bots]
     await update.message.reply_text(f"✅ {name} slider started.")
 
+# --- COMMANDS ---
 @sudo_only
 async def ncdark(u, c): await start_nc(ncdark_loop, u, c, "ncdark")
 @sudo_only
@@ -420,6 +453,31 @@ async def animal(u, c): await start_slider(ANIMAL_TEXTS, u, c, "animal")
 @sudo_only
 async def swipe(u, c): await start_slider(SWIPE_TEXTS, u, c, "swipe")
 
+# --- CONTROL ---
+@sudo_only
+async def stopnc(update: Update, context: ContextTypes.DEFAULT_TYPE):
+    chat_id = update.message.chat_id
+    if chat_id in nc_tasks:
+        for t in nc_tasks[chat_id]: t.cancel()
+        del nc_tasks[chat_id]
+    await update.message.reply_text(STOP_MESSAGE)
+
+@sudo_only
+async def stopspam(update: Update, context: ContextTypes.DEFAULT_TYPE):
+    chat_id = update.message.chat_id
+    if chat_id in spam_tasks:
+        for t in spam_tasks[chat_id]: t.cancel()
+        del spam_tasks[chat_id]
+    await update.message.reply_text(STOP_MESSAGE)
+
+@sudo_only
+async def stopslide(update: Update, context: ContextTypes.DEFAULT_TYPE):
+    chat_id = update.message.chat_id
+    if chat_id in slider_tasks:
+        for t in slider_tasks[chat_id]: t.cancel()
+        del slider_tasks[chat_id]
+    await update.message.reply_text(STOP_MESSAGE)
+
 @sudo_only
 async def stopall(update: Update, context: ContextTypes.DEFAULT_TYPE):
     chat_id = update.message.chat_id
@@ -429,6 +487,22 @@ async def stopall(update: Update, context: ContextTypes.DEFAULT_TYPE):
             del d[chat_id]
     await update.message.reply_text(STOP_MESSAGE)
 
+@sudo_only
+async def delay(update: Update, context: ContextTypes.DEFAULT_TYPE):
+    global GLOBAL_DELAY
+    if not context.args:
+        await update.message.reply_text(f"⏱ Current delay: {GLOBAL_DELAY:.3f}s")
+        return
+    try:
+        new_delay = float(context.args[0])
+        if 0.005 <= new_delay <= 0.05:
+            GLOBAL_DELAY = new_delay
+            await update.message.reply_text(f"✅ Delay set to {GLOBAL_DELAY:.3f}s")
+        else:
+            await update.message.reply_text("❌ Use between 0.005 and 0.05")
+    except: pass
+
+# --- OWNER COMMANDS ---
 @owner_only
 async def promote(update: Update, context: ContextTypes.DEFAULT_TYPE):
     chat_id = update.message.chat_id
@@ -469,34 +543,36 @@ async def bye(update: Update, context: ContextTypes.DEFAULT_TYPE):
 
 async def help_cmd(update: Update, context: ContextTypes.DEFAULT_TYPE):
     if is_owner_or_sudo(update.effective_user.id):
-        await update.message.reply_text("✨ MISS LEE MULTI-BOT HELP ACTIVE ✨\nCommands: /ncdark, /tmkcnc, /texts, /alexa, /stopall etc.")
+        await update.message.reply_text("✨ THE FREAKY MUSE HELP ACTIVE ✨\nCommands: /ncdark, /tmkcnc, /texts, /alexa, /stopall etc.")
 
+# --- APP BUILDER ---
 def build_app(token):
-    app = Application.builder().token(token).build()
+    app_instance = Application.builder().token(token).build()
     handlers = [
         ("ncdark", ncdark), ("tmkcnc", tmkcnc), ("evonc", evonc), ("marvelnc", marvelnc),
         ("magicnc", magicnc), ("sportnc", sportnc), ("lndnc", lndnc), ("ncspeed", ncspeed),
         ("emognc", emognc), ("yournc", yournc), ("customnc", customnc), ("typenc", typenc),
         ("flashnc", flashnc), ("foxync", foxync), ("texts", texts), ("shayari", shayari),
         ("songy", songy), ("custom", custom), ("alexa", alexa), ("animal", animal),
-        ("swipe", swipe), ("stopall", stopall), ("promote", promote), ("addsudo", addsudo),
+        ("swipe", swipe), ("stopnc", stopnc), ("stopspam", stopspam), ("stopslide", stopslide),
+        ("stopall", stopall), ("delay", delay), ("promote", promote), ("addsudo", addsudo),
         ("delsudo", delsudo), ("sudo", sudo), ("bye", bye), ("help", help_cmd)
     ]
-    for name, cmd in handlers: app.add_handler(CommandHandler(name, cmd))
-    app.add_handler(ChatMemberHandler(handle_my_chat_member, ChatMemberHandler.MY_CHAT_MEMBER))
-    return app
+    for name, cmd in handlers: app_instance.add_handler(CommandHandler(name, cmd))
+    app_instance.add_handler(ChatMemberHandler(handle_my_chat_member, ChatMemberHandler.MY_CHAT_MEMBER))
+    return app_instance
 
 async def run_all_bots():
     global bots_info
     for token in TOKENS:
         try:
-            app = build_app(token)
-            await app.initialize()
-            me = await app.bot.get_me()
-            bots_info.append({'id': me.id, 'username': me.username, 'bot': app.bot})
-            apps.append(app); bots.append(app.bot)
-            await app.start()
-            await app.updater.start_polling()
+            app_instance = build_app(token)
+            await app_instance.initialize()
+            me = await app_instance.bot.get_me()
+            bots_info.append({'id': me.id, 'username': me.username, 'bot': app_instance.bot})
+            apps.append(app_instance); bots.append(app_instance.bot)
+            await app_instance.start()
+            await app_instance.updater.start_polling()
             print(f"🚀 Started: @{me.username}")
         except Exception as e: print(f"❌ Error starting bot: {e}")
     await asyncio.Event().wait()
